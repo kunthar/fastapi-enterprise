@@ -1,0 +1,142 @@
+[project]
+name = "fastapi-enterprise-template"
+version = "0.1.0"
+description = "cookiecutter enterprise template for fastapi"
+authors = [
+    { name = "jeffry", email = "182467653@qq.com" }
+]
+dependencies = [
+    "fastapi>=0.108.0",
+    "alembic>=1.13.1",
+    "sqlalchemy>=2.0.25",
+    "pydantic-settings>=2.1.0",
+    "uvicorn[standard]>=0.25.0",
+    "pyjwt>=2.8.0",
+    "pandas>=2.1.4",
+    "redis>=5.0.1",
+    "sentry_sdk>=1.39.2",
+    "httpx>=0.26.0",
+    "pydantic_extra_types>=2.4.1",
+    "phonenumbers>=8.13.27",
+    "asyncpg>=0.29.0",
+    "sqladmin>=0.16.1",
+    "cryptography>=42.0.7",
+    "bcrypt>=4.1.3",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+
+# [project.scripts]
+# hello = "naas-backend:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest>=7.4.4",
+    "pre-commit>=3.5.0",
+    "ruff>=0.1.11",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.23.3",
+    "black>=23.12.1",
+    "mypy>=1.8.0",
+    "types-redis>=4.6.0.20240425",
+    "polyfactory>=2.16.0",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D", "G002", "DTZ003", "ANN401", "ANN101", "ANN102", "EM101", "PD901", "COM812", "ISC001", "FBT", "A003", "PLR0913", "G004"]
+fixable = ["ALL"]
+
+
+[tool.ruff.lint.extend-per-file-ignores]
+"env.py" = ["INP001", "I001", "ERA001"]
+"tests/*.py" = ["S101", "ANN201"]
+"*exceptions.py" = ["ARG001"]
+"models.py" = ["RUF012"]
+"restapi.py" = ["A002", "B008"]
+"deps.py" = ["B008"]
+"src/internal/api.py" = ["ARG001"]
+"src/auth/schemas.py" = ["N815"] # frontend menu
+"alembic/*.py" = ["INP001", "UP007"]
+"__init__.py" = ["F403"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls=[
+    "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.params_functions.Form",
+    "fastapi.File",
+    "fastapi.Path",
+    "fastapi.params.Depends",
+]
+
+[tool.black]
+line-length = 120
+preview = true
+
+[tool.pytest.ini_options]
+addopts = "--cov-report term --cov-config=.coveragerc -W ignore:DeprecationWarning --cov=src -v"
+xfail_strict = true
+asyncio_mode = "auto"
+markers = ["pytest.mark.anyio"]
+testpaths = ["tests"]
+
+[tool.coverage.report]
+skip_empty = true
+skip_covered = true
+precision = 2
+omit = ["*/__init__.py", "*/consts.py"]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplentmentError",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING",
+    "@overload",
+    "@typing.overload",
+    "assert_never",
+    "typing.assert_never",
+]
+
+[tool.coverage.run]
+concurrency=["thread", "greenlet"]
+
+[tool.mypy]
+exclude = "^tools/.*"
+plugins = ["pydantic.mypy"]
+
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_return_any = true
+strict = true
+disallow_untyped_decorators = true
+disallow_any_generics = false
+implicit_reexport = false
+show_error_codes = true
+
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.pyright]
+include = ["src", "tests", "examples"]
